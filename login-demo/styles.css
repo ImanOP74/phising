@@ -1,0 +1,349 @@
+:root {
+  /* Color Palette */
+  --bg-top: #1A252E;
+  --bg-bottom: #1A252E;
+  --text-primary: #F5F5F5;
+  --text-secondary: #A0AAB2;
+  --text-disabled: #6F7780;
+  
+  /* CTA Colors */
+  --cta-blue: #0064E0;
+  --cta-blue-hover: #0056C2;
+  --cta-blue-active: #004A99;
+  
+  /* Input Colors */
+  --input-bg: transparent;
+  --input-border: #3A4750;
+  --input-border-focus: #5A6A75;
+  
+  /* Spacing */
+  --spacing-1: 8px;
+  --spacing-2: 16px;
+  --spacing-3: 24px;
+  --spacing-4: 32px;
+  --spacing-5: 40px;
+  --spacing-6: 48px;
+  --spacing-8: 64px;
+
+  /* Animation Easing */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg-top);
+  color: var(--text-primary);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 414px;
+  height: 100dvh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-3) var(--spacing-2);
+  transition: opacity 0.32s var(--ease-spring), transform 0.32s var(--ease-spring), visibility 0.32s;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* Ensure no movement on exit for the first screen, just crossfade to load */
+#login-screen.exit {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Loading screen transitions */
+#loading-screen.hidden {
+  opacity: 0;
+  transform: scale(1.03);
+}
+
+#loading-screen {
+  opacity: 1;
+  transform: scale(1);
+}
+
+#loading-screen.exit {
+  opacity: 0;
+  transform: scale(0.97);
+}
+
+/* Success screen transitions */
+#success-screen.hidden {
+  opacity: 0;
+  transform: scale(1.03);
+}
+
+#success-screen {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* TOP BAR */
+.top-bar {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-1) 0;
+  margin-bottom: var(--spacing-4);
+}
+
+.lang-selector {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  padding: 8px;
+  transition: color 0.2s;
+}
+
+/* LOGO */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 4vh;
+  margin-bottom: var(--spacing-8);
+}
+
+.logo-mark {
+  width: 68px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-mark svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Loading Logo specific centering */
+.loading-logo {
+  margin-top: auto;
+  margin-bottom: auto; /* Push to absolute center combined with flex */
+  transform: translateY(-20px); /* Adjust visually to absolute center taking footer into account */
+}
+
+/* FORM */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  width: 100%;
+  padding: 0 var(--spacing-1);
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-field {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 12px;
+  padding: 16px var(--spacing-2);
+  color: var(--text-primary);
+  font-size: 15px;
+  line-height: 1.5;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-field::placeholder {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.input-field:focus {
+  border-color: var(--input-border-focus);
+}
+
+/* PRIMARY BUTTON */
+.btn-primary {
+  margin-top: 2px;
+  width: 100%;
+  background: var(--cta-blue);
+  color: white;
+  border: none;
+  border-radius: 24px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s var(--ease-spring), background-color 0.15s;
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+  background: var(--cta-blue-active);
+}
+
+/* LOWER ACTIONS */
+.lower-actions {
+  margin-top: var(--spacing-2);
+  display: flex;
+  justify-content: center;
+}
+
+.action-link {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 12px;
+  transition: opacity 0.2s;
+}
+
+.action-link:active {
+  opacity: 0.7;
+}
+
+/* Create Account Bottom */
+.create-account-wrapper {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0 var(--spacing-1);
+}
+
+.create-account-btn {
+  background: transparent;
+  border: 1px solid #364D63; /* slightly blueish gray */
+  color: #3897F0; /* Instagram bright blue text */
+  border-radius: 24px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  width: 100%;
+  transition: background 0.15s, transform 0.15s var(--ease-spring);
+  cursor: pointer;
+}
+
+.create-account-btn:active {
+  background: rgba(56, 151, 240, 0.1);
+  transform: scale(0.98);
+}
+
+/* Footer Branding */
+.footer-branding {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-2) 0 var(--spacing-1);
+}
+
+.meta-logo-plain {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #A0AAB2;
+}
+
+.meta-logo-plain .meta-text {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+}
+
+/* Loading Screen Footer */
+.loading-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: var(--spacing-4);
+}
+
+.from-text {
+  color: #737373;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.meta-gradient-logo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.meta-text-gradient {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  background: -webkit-linear-gradient(0deg, #FFD600, #FF7A00, #FF0069, #D300C5, #7638FA);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Success Screen (Private Space) */
+#success-screen {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.private-space-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.private-space-title {
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  color: #FFFFFF;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.2s;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
