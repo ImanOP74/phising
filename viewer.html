@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blob Data Viewer - Admin Demo</title>
+  <!-- Modern Premium Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Premium Modern Dark System Design matching the submission form */
+    :root {
+      --bg-gradient-start: #0D1520;
+      --bg-gradient-end: #13202B;
+      --card-bg: rgba(25, 39, 52, 0.4);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-primary: #FFFFFF;
+      --text-secondary: #A8B0B8;
+      --text-disabled: #6F7780;
+      --cta-color: #1877F2;
+      --cta-hover: #1565D8;
+      --success-accent: #00E676;
+      --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+      font-family: var(--font-main);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 40px 24px;
+    }
+
+    .wrapper {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* Header Section */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      gap: 16px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, #FFFFFF, #E2E8F0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* Actions and Buttons */
+    .actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--cta-color);
+      color: #FFFFFF;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--cta-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Responsive Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+      margin-top: 16px;
+    }
+
+    /* Sleek Cards */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .user-badge {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(24, 119, 242, 0.1);
+      color: #3A91FF;
+      border: 1px solid rgba(24, 119, 242, 0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .card-body {
+      color: var(--text-primary);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .card-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-disabled);
+    }
+
+    .timestamp {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .meta-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .meta-link:hover {
+      color: var(--cta-color);
+    }
+
+    /* Skeleton Loading State */
+    .skeleton-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      height: 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .skeleton-line {
+      height: 16px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 8px;
+    }
+
+    .skeleton-badge { width: 40%; height: 24px; }
+    .skeleton-text-1 { width: 90%; height: 16px; }
+    .skeleton-text-2 { width: 75%; height: 16px; }
+
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Empty State */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 24px;
+      background: var(--card-bg);
+      border: 1px dashed var(--card-border);
+      border-radius: 24px;
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    /* Error Message Alert */
+    .error-alert {
+      background: rgba(255, 74, 90, 0.1);
+      border: 1px solid rgba(255, 74, 90, 0.2);
+      color: #FF4A5A;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    /* Mobile Responsive adjustments */
+    @media (max-width: 600px) {
+      body {
+        padding: 24px 16px;
+      }
+      .header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .actions {
+        width: 100%;
+      }
+      .btn {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <div class="header-bar">
+      <div>
+        <h1>Blob Data Viewer</h1>
+        <p class="subtitle">Educational demo dashboard visualizing saved private Vercel Blobs</p>
+      </div>
+      <div class="actions">
+        <a href="/index.html" class="btn btn-secondary">Submit New Form</a>
+        <button id="refreshBtn" class="btn btn-primary">Refresh Data</button>
+      </div>
+    </div>
+
+    <!-- Error Indicator -->
+    <div id="errorAlert" class="error-alert"></div>
+
+    <!-- Submissions Grid Container -->
+    <div id="submissionsGrid" class="grid">
+      <!-- Loading skeletons initially -->
+      <div class="skeleton-card">
+        <div class="skeleton-line skeleton-badge"></div>
+        <div class="skeleton-line skeleton-text-1"></div>
+        <div class="skeleton-line skeleton-text-2"></div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton-line skeleton-badge"></div>
+        <div class="skeleton-line skeleton-text-1"></div>
+        <div class="skeleton-line skeleton-text-2"></div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton-line skeleton-badge"></div>
+        <div class="skeleton-line skeleton-text-1"></div>
+        <div class="skeleton-line skeleton-text-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const grid = document.getElementById('submissionsGrid');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const errorAlert = document.getElementById('errorAlert');
+
+    const skeletonHTML = `
+      <div class="skeleton-card">
+        <div class="skeleton-line skeleton-badge"></div>
+        <div class="skeleton-line skeleton-text-1"></div>
+        <div class="skeleton-line skeleton-text-2"></div>
+      </div>
+    `;
+
+    // Format ISO string into a human readable format
+    function formatDate(isoString) {
+      try {
+        const date = new Date(isoString);
+        return date.toLocaleString(undefined, {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
+      } catch (e) {
+        return isoString;
+      }
+    }
+
+    async function loadData() {
+      // Clear alert and set grid loading skeletons
+      errorAlert.style.display = 'none';
+      grid.innerHTML = skeletonHTML.repeat(3);
+      refreshBtn.disabled = true;
+
+      try {
+        const response = await fetch('/api/list');
+        if (!response.ok) {
+          throw new Error(`Failed to load entries (${response.status} ${response.statusText})`);
+        }
+
+        const data = await response.json();
+        grid.innerHTML = '';
+
+        if (!data || data.length === 0) {
+          grid.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">📁</div>
+              <h3>No Submissions Found</h3>
+              <p class="subtitle">Submit some form data from the main page to populate the list.</p>
+            </div>
+          `;
+          return;
+        }
+
+        data.forEach(entry => {
+          const user = entry.data?.demoUser || 'Anonymous';
+          const text = entry.data?.demoText || '(No Content)';
+          const rawTimestamp = entry.data?.timestamp || entry.uploadedAt;
+          const displayTime = formatDate(rawTimestamp);
+
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div>
+              <div class="card-header">
+                <span class="user-badge">${escapeHTML(user)}</span>
+              </div>
+              <div class="card-body">${escapeHTML(text)}</div>
+            </div>
+            <div class="card-footer">
+              <div class="timestamp">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>${displayTime}</span>
+              </div>
+              <a href="${entry.url}" target="_blank" class="meta-link" title="Open raw blob URL">JSON File</a>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+      } catch (err) {
+        console.error('Failed to render viewer data:', err);
+        errorAlert.textContent = `Error: ${err.message}. If deploying locally, make sure you configure your Vercel Blob environment variables.`;
+        errorAlert.style.display = 'block';
+        grid.innerHTML = '';
+      } finally {
+        refreshBtn.disabled = false;
+      }
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+
+    refreshBtn.addEventListener('click', loadData);
+
+    // Initial Load
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>
