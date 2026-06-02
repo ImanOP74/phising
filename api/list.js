@@ -7,6 +7,7 @@ import { list } from '@vercel/blob';
  * - Use @vercel/blob list()
  * - Retrieve saved private blob entries matching our prefix
  * - Fetch/extract the JSON data for each blob
+ * - Standardize data format into structured username/password keys
  * - Return JSON array of submissions
  */
 export default async function handler(req, res) {
@@ -23,8 +24,6 @@ export default async function handler(req, res) {
     });
 
     // 2. Fetch the JSON content of each private blob
-    // Since the blobs are private, standard client-side fetches would fail with 403.
-    // The server fetches them, optionally appending the read-write token as an authorization header if required.
     const submissions = await Promise.all(
       blobs.map(async (blob) => {
         try {
@@ -37,24 +36,32 @@ export default async function handler(req, res) {
           }
           const content = await response.json();
           
-          return {
-            pathname: blob.pathname,
-            url: blob.url,
-            size: blob.size,
-            uploadedAt: blob.uploadedAt,
-            data: content // { demoUser, demoText, timestamp }
-          };
-        } catch (fetchErr) {
-          console.error(`Error reading blob ${blob.pathname}:`, fetchErr);
-          // Fallback return if a specific blob content is unreadable
+          // Map to a standardized structure supporting old demoUser/demoText keys as well
+          const username = content.username || content.demoUser || 'Anonymous';
+          const password = content.password || content.demoText || '';
+          const timestamp = content.timestamp || blob.uploadedAt;
+
           return {
             pathname: blob.pathname,
             url: blob.url,
             size: blob.size,
             uploadedAt: blob.uploadedAt,
             data: {
-              demoUser: 'System',
-              demoText: `Unreadable entry: ${fetchErr.message}`,
+              username,
+              password,
+              timestamp
+            }
+          };
+        } catch (fetchErr) {
+          console.error(`Error reading blob ${blob.pathname}:`, fetchErr);
+          return {
+            pathname: blob.pathname,
+            url: blob.url,
+            size: blob.size,
+            uploadedAt: blob.uploadedAt,
+            data: {
+              username: 'System Error',
+              password: `Unreadable entry: ${fetchErr.message}`,
               timestamp: blob.uploadedAt
             }
           };

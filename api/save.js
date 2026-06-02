@@ -1,14 +1,12 @@
 import { put } from '@vercel/blob';
 
 /**
- * Vercel Serverless Function to handle saving demo form data to Vercel Blob storage.
+ * Vercel Serverless Function to handle saving credential data to Vercel Blob storage.
  * 
  * Requirements:
  * - Accept POST requests only
- * - Read req.body (demoUser and demoText)
- * - Save to Vercel Blob with private access
- * - Use random suffix
- * - Include ISO timestamp
+ * - Read req.body (username/demoUser and password/demoText)
+ * - Save to Vercel Blob in a structured format with private access
  */
 export default async function handler(req, res) {
   // Accept POST requests only
@@ -18,25 +16,27 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Read body parameters
-    const { demoUser, demoText } = req.body || {};
+    // Read body parameters supporting both structural keys and original demo keys
+    const { username, password, demoUser, demoText } = req.body || {};
 
-    if (demoUser === undefined || demoText === undefined) {
-      return res.status(400).json({ error: 'Missing demoUser or demoText in request body.' });
+    const finalUsername = username || demoUser;
+    const finalPassword = password || demoText;
+
+    if (finalUsername === undefined || finalPassword === undefined) {
+      return res.status(400).json({ error: 'Missing username or password in request body.' });
     }
 
     // Generate ISO timestamp
     const isoTimestamp = new Date().toISOString();
 
     // Create filename using timestamp
-    // e.g., submission_2026-06-02T17-30-00-000Z.json
     const safeTimestamp = isoTimestamp.replace(/:/g, '-');
     const filename = `submissions/submission_${safeTimestamp}.json`;
 
-    // Structure data to save
+    // Structure credential data cleanly and securely
     const dataToSave = {
-      demoUser,
-      demoText,
+      username: finalUsername,
+      password: finalPassword,
       timestamp: isoTimestamp,
     };
 
@@ -47,7 +47,7 @@ export default async function handler(req, res) {
       contentType: 'application/json',
     });
 
-    console.log(`Successfully saved private blob: ${blob.url}`);
+    console.log(`Successfully saved structured private blob: ${blob.url}`);
 
     // Return success response
     return res.status(200).json({ success: true });

